@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Igelkotts Supermarket</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <strong>IGELKOTTS SUPERMARKET</strong>
+      <p>Butikssystem · Demoversion</p>
+    </div>
+    <span class="demo-tag">DEMOLÄGE</span>
+  </header>
+
+  <nav class="navigation">
+    <button data-page="dashboard">Översikt</button>
+    <button data-page="map">Bygg butikskarta</button>
+    <button data-page="scan">Scan &amp; Go</button>
+    <button data-page="pant">Pantomat</button>
+    <button data-page="store">Butik</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="page">
+      <h1>Översikt</h1>
+      <p>Välkommen till Igelkotts Supermarket!</p>
+
+      <div class="panel">
+        <h2>Din demobutik</h2>
+        <p id="dashboardStore">Igelkotts Supermarket Hässleholm</p>
+        <p>Avdelningar på kartan: <strong id="departmentCount">0</strong></p>
+        <p>Totala kartelement: <strong id="objectCount">0</strong></p>
+        <button data-open="map">Öppna Bygg karta</button>
+      </div>
+
+      <div class="notice">
+        Detta är en testversion. Inga riktiga betalningar eller
+        pantutbetalningar görs.
+      </div>
+    </section>
+
+    <section id="map" class="page hidden">
+      <h1>Bygg butikskarta</h1>
+      <p>Välj ett verktyg och rita på rutnätet.</p>
+
+      <div class="panel">
+        <label for="mapTool">Verktyg</label>
+        <select id="mapTool">
+          <option value="select">Välj och flytta</option>
+          <option value="department">Avdelningar</option>
+          <option value="shelf">Hyllor</option>
+          <option value="checkout">Kassor</option>
+          <option value="emergency">Nödutgångar</option>
+          <option value="door">In- och utgångar</option>
+          <option value="scanstart">Scan &amp; Go – start</option>
+          <option value="scanend">Scan &amp; Go – slut</option>
+          <option value="info">Informationsdiskar</option>
+        </select>
+
+        <div id="toolOptions"></div>
+
+        <p id="toolHelp">Välj ett verktyg.</p>
+
+        <hr>
+
+        <h3>Markerat objekt</h3>
+        <label for="objectName">Namn</label>
+        <input id="objectName" placeholder="Objektets namn">
+
+        <label for="objectColor">Färg</label>
+        <input id="objectColor" type="color" value="#8cc7ed">
+
+        <button id="saveObject">Spara ändring</button>
+        <button id="deleteObject">Ta bort objekt</button>
+        <button id="clearMap">Töm karta</button>
+      </div>
+
+      <div class="panel">
+        <h2>Butikens rutnät</h2>
+        <div id="mapCanvas" aria-label="Butikskarta"></div>
+        <p class="small">
+          Avdelningar får inte överlappa. Varje avdelning får en automatisk
+          färg. Högst tre start- och tre slutmarkörer får placeras ut.
+        </p>
+      </div>
+    </section>
+
+    <section id="scan" class="page hidden">
+      <h1>Scan &amp; Go</h1>
+      <p>Simulera en handling i butiken.</p>
+
+      <div class="panel">
+        <h2>Starta handling</h2>
+        <p>Här simuleras skanning av butikens gröna startkod.</p>
+        <button id="startScan">Starta Scan &amp; Go</button>
+      </div>
+
+      <div id="shoppingArea" class="panel hidden">
+        <h2>Din varukorg</h2>
+
+        <label for="productSelect">Testvara</label>
+        <select id="productSelect">
+          <option value="Mjölk 1,5 l|15.90">Mjölk 1,5 l – 15,90 kr</option>
+          <option value="Brödlimpa|24.90">Brödlimpa – 24,90 kr</option>
+          <option value="Äpplen 1 kg|29.90">Äpplen 1 kg – 29,90 kr</option>
+          <option value="Kaffe|69.90">Kaffe – 69,90 kr</option>
+          <option value="Choklad|20">Choklad – 20,00 kr</option>
+        </select>
+
+        <button id="addProduct">Lägg till vara</button>
+
+        <div id="cartRows"></div>
+
+        <h2>Summa: <span id="cartTotal">0,00 kr</span></h2>
+
+        <button id="finishScan">HANDLAT FÄRDIGT</button>
+        <p id="scanMessage" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="pant" class="page hidden">
+      <h1>Pantomat</h1>
+      <p>Simulera pantning via Pant-sidan.</p>
+
+      <div id="pantStep1" class="panel">
+        <h2>1. Anslut till pantomaten</h2>
+        <div class="fake-qr">PANTOMAT 01</div>
+        <p>Tryck för att simulera skanning av pantomatens QR-kod.</p>
+        <button id="connectPant">Skanna pantomatens QR-kod</button>
+      </div>
+
+      <div id="pantStep2" class="panel hidden">
+        <h2>2. Välj antal förpackningar</h2>
+
+        <div class="pant-row">
+          <span>33 cl aluminiumburkar – 1 kr/st</span>
+          <button data-counter="cans33" data-delta="-1">−</button>
+          <output id="cans33Out">0</output>
+          <button data-counter="cans33" data-delta="1">+</button>
+        </div>
+
+        <div class="pant-row">
+          <span>50 cl aluminiumburkar – 2 kr/st</span>
+          <button data-counter="cans50" data-delta="-1">−</button>
+          <output id="cans50Out">0</output>
+          <button data-counter="cans50" data-delta="1">+</button>
+        </div>
+
+        <div class="pant-row">
+          <span>50 cl plastflaskor – 2 kr/st</span>
+          <button data-counter="bottles50" data-delta="-1">−</button>
+          <output id="bottles50Out">0</output>
+          <button data-counter="bottles50" data-delta="1">+</button>
+        </div>
+
+        <h2>Antal: <span id="pantCount">0</span></h2>
+        <h2>Pantbelopp: <span id="pantAmount">0,00 kr</span></h2>
+        <button id="reviewPant">PANTA</button>
+      </div>
+
+      <div id="pantStep3" class="panel hidden">
+        <h2>3. Kontrollera pantningen</h2>
+        <div id="pantReviewDetails"></div>
+        <button id="confirmPant">BEKRÄFTA PANTNING</button>
+        <button id="editPant">Tillbaka och ändra</button>
+      </div>
+
+      <div id="pantStep4" class="panel hidden">
+        <h2>Pantning klar!</h2>
+        <p id="pantSuccess">Pengarna har registrerats i demoläget.</p>
+        <button id="newPant">Ny pantning</button>
+      </div>
+
+      <p class="small">
+        Pantvärdena är exempelvärden. Ingen riktig pantautomat eller
+        utbetalning är ansluten.
+      </p>
+    </section>
+
+    <section id="store" class="page hidden">
+      <h1>Butiksinställningar</h1>
+
+      <div class="panel">
+        <label for="storeName">Butikens namn</label>
+        <input id="storeName" value="Igelkotts Supermarket Hässleholm">
+
+        <label for="storeLocation">Ort</label>
+        <input id="storeLocation" value="Hässleholm">
+
+        <button id="saveStore">Spara butiksuppgifter</button>
+        <p id="storeMessage" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
